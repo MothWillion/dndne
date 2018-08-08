@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>editor</title>
+  <style>
+    img{width: 20px;}
+  </style>
+</head>
+
+<body>
+  <div id="toolBar1">
+    <select onchange="myCommand('formatblock',this[this.selectedIndex].value)">
+      <option selected>- formatting -</option>
+      <option value="h1">Title 1 &lt;h1&gt;</option>
+      <option value="h2">Title 2 &lt;h2&gt;</option>
+      <option value="h3">Title 3 &lt;h3&gt;</option>
+      <option value="h4">Title 4 &lt;h4&gt;</option>
+      <option value="h5">Title 5 &lt;h5&gt;</option>
+      <option value="h6">Subtitle &lt;h6&gt;</option>
+      <option value="p">Paragraph &lt;p&gt;</option>
+      <option value="pre">Preformatted &lt;pre&gt;</option>
+    </select>
+    <select onchange="myCommand('fontname',this[this.selectedIndex].value);this.selectedIndex=0;">
+      <option class="heading" selected>- font -</option>
+      <option>Arial</option>
+      <option>Arial Black</option>
+      <option>Courier New</option>
+      <option>Times New Roman</option>
+    </select>
+    <select onchange="myCommand('fontsize',this[this.selectedIndex].value);this.selectedIndex=0;">
+      <option class="heading" selected>- size -</option>
+      <option value="1">Very small</option>
+      <option value="2">A bit small</option>
+      <option value="3">Normal</option>
+      <option value="4">Medium-large</option>
+      <option value="5">Big</option>
+      <option value="6">Very big</option>
+      <option value="7">Maximum</option>
+    </select>
+    <select onchange="myCommand('forecolor',this[this.selectedIndex].value);this.selectedIndex=0;">
+      <option class="heading" selected>- color -</option>
+      <option value="red">Red</option>
+      <option value="blue">Blue</option>
+      <option value="green">Green</option>
+      <option value="black">Black</option>
+    </select>
+    <select onchange="myCommand('backcolor',this[this.selectedIndex].value);this.selectedIndex=0;">
+      <option class="heading" selected>- background -</option>
+      <option value="red">Red</option>
+      <option value="green">Green</option>
+      <option value="black">Black</option>
+    </select>
+  </div>
+  <div id="toolBar2">
+    <img class="intLink" title="Undo" onclick="myCommand('undo');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACa0lEQVRYR8WXv4sTURDHZzYJbKHoiVwh/mgCIfteRIhYiuhhpZaineBfcKBiIZyCFnL9VTZiY2MhKKiFcCCCSEDNjISQIpxaGuWMENZNRt6RDXFvd7O7mvW1+2a+nze/3luEDEtrvUJEtzKYbjPBtE601lcAYJWIUtuGaaVy4osbR7kDTIvnDhAUzxUgTDw3gCjxXADixA0AIp7wPO+HiPQ8z+t1Op3NtB215SfMaJZ4mI2IbCLiKxFZR8RnRPQhCdA2gCziEUBvAWCNmR8AwDAK5g+AfyUeEHvtuu75drv9JXYQzUl8S1NEvgLAEjO/C0JMIqC1vgkAK0nylmWPqZHhcHiy1Wo1pu2DKVgFADPr57WaRHQ4EsB80FrPFUJELjLzQx8iqg3nBiEiT5j5bCxAkkiY27BWqy24rrtYLBb3IaIJ7VEAOA0AizE5/ElEuwHAixxEvnFcOmKu46LW+pyI3EbEasSMUMz8cSZAXCRmvQfq9XppMBjcRcTlIISInGLml4kAoiBmAfiijuPcsyzrcgDiDBE9TQwQBpEUQCm1AxE/A8AuH0JEjjDz+1QAQYikAMZOKWVScW1S+Yh7ms3mt9QA0xBpAKrV6vFCobA+BvhORAsz2zBuFJruIKKrScdluVzeb9v2J7NfRO4z86W/Akgq7O+rVCo7S6WS/2CZFGCmFKQVH6ftAABsmAvJtu29jUbjV64RcBznmGVZbwDgBhHdmT5Eqh+TLKcfd8EyIl7v9/uHut3u4H8APAeAx8y8FjzE3CNgLqzRaPSImZcAYJQ7gFLqAgC8YOZeWArnHgGl1EFm3oiqn99dpgcw46OCqwAAAABJRU5ErkJggg=="
+    />
+    <img class="intLink" title="Redo" onclick="myCommand('redo');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACMklEQVRYR8XWzctNURTH8c+TlwwMlBKGIhlSTJS3CANlgIkoyYikMPQfSAZMpBh4yoBiJiUkkiRRiEQRUkooRGhpH07Xuefsc+/Rs0f3dtb6re/ee73sEWO8RsY4vi4BDmEffrTZVJcAr3EbG/A1F6JrgOm4jrX4mAPxPwAi7n2sxNsmiGEBZmIOvuAc4gSK9RxL8KIOoi3AIuzEGkxr2h0iL1bgUT/bHIBx2ILdmJ8RtNfkPVbjVpVvE8A8nMKCAQKXXT5jPS726tQBLE0OE4cMXrh/Tyd5uqzXD2AKHmBGR8FDJhrUVozmABzDjg6Df8NGnM+5gql4g/EdAcT9r8Ol3CSMMjvSEPwe7iJq/Wey3YvJPX4fUgXcbFOGkfWbKxyi2cTVHMaziu9R8+VGFOUXiRywfVdVEka9Luzx+JTE7tRolQGiBS9PiVx7mFUAj1N7LTtGAp1puJYCIFpv7LzqlP6RqAKItjm3ZPkk/S/uuh9HAMQEXIZXuQlcBXA5iRQaB7E/Q/BCyp13GbZ/TKoAjmN7SWQXjmaITkpTMcP0r0kVQFRAVEKx4oVztpVqC+MqgBizLzEh6WzDyRaarUz7zYK492gsseKxWfxuJZ5jXDeMHqbG8hSzc8QGsakbx/GcusLvp/ti3BgkQJNP04Mkxmfc/7XUXJr0Wn9vAgjBTTiRcuFA6wgNDjkAITErDaKojj2IQdPJygUogkUyrsJVRIuOh8ZQqy3AUMGqnMcc4BcnUV4hyzfmAwAAAABJRU5ErkJggg=="
+    />
+    <img class="intLink" title="Remove formatting" onclick="myCommand('removeFormat')" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACHklEQVRYR+2Wv4sTQRTHvy8XRUJASCOkMaRKeItNGjnUk8PqKj1UDhGxESxt/C9srMRGRC0OG7GwsDgQO5trMjNJqhMLCy1EFEkxN08G3WM37G1mkkCavG6XN/P5vDc/dglLDloyHyuBVQcW2YE1Zn4J4JfW+j4ACdngixLw8F0iuu6hIvJCa303RGIRAjl4WnWoxLwChfAYiXkESuGhErMKBMFDJGYRiIJPk4gVmAleJhEjMBf8OIlQgYXAMxfTI6XUQ/8cIpCFfxeRb0TEIbdcUY78ix1jzOsQgRzcObdujPmcJMlbAFuxEp4M4JbWejcdW9aBLPwHEa33+/2hH8jMJ4noHYAroRJF8LIO5ODW2o3hcNjPwlqt1ql6vf4ewKUAiUMRuZ2tvKwDWfhPa+3FSXg6uNls1hqNxh6A8yUShwBuKKXeFOVMLsERXER+O+c2BoPBflmFzFwnog8AegV5pfDJJchW/sc5t2mM+RTQXrTb7dO1Wu0jgHOZ/KnwnECSJE8A+B8JHw+UUo9D4GlOp9NpVavVg//PFsDN49qenfdoCZj5HoCnROTfHYjIZa31lxCJXq93Yjwe+x+SbQAeflUp5U/J1MjtAWa+A+C5lxCRr9baC6PRKK2qcLJut3u2Uqk8I6LNWHjhMWTmHSJ6BWBtqn4+IarysmOIJEmuAfB74kyIhIg4Edk2xvgbMipCvgVRE8YmrwSW3oG/QTwIMOVOHhwAAAAASUVORK5CYII=">
+    <img class="intLink" title="Bold" onclick="myCommand('bold');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABfklEQVRYR+3VP0hWYRTH8c9L4BQI2ejWqBCEOEk0aJN/5nAxQ1ycbAshdM5dhNJFcdHBbLOxSSRQERycmgIdJQjUOPAGl+ur9973vXqDfMbLOef3fc7vPOfWVHxqFeu7B/jnO/AKKxSyah+zWM8zX1kd+IjxPIUaxAT4BH7dlJ8F8AmvmwSItG28xOV1NW4bIHRHsVoWwDfMXFMsLvMc79CWiNlBb1kAmxjJsGQMS6mYxzhtlFfUgjwAHThJifVg964AunCQEotvh3cB8BAbGEiInaEd52UAhI/p2/2tG3Y+Q0AkTzzlN2UNYdGVELPQjZ9VAWxhqMpNGNqD+FJWB46wdsMielFfRsmQr+gvCyDPHpjHdEIwpj9eQbyGK+c2FlEnfqSUnmLvvwH4gLeJ2/7Go7IsaGYIP2O4rCEsuogivg/xG294ig5hUYA5vG9lES1gsqhq3e8pLGflZnXgCRbxIKsQLnCM7wjf00+xKQty6LYWktWB1qrnyL4H+AP81lEh0FaCygAAAABJRU5ErkJggg=="
+    />
+    <img class="intLink" title="Italic" onclick="myCommand('italic');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABgklEQVRYR+3Vv0tWURzH8ZdCgpM/wElIyqG/wKUxqS0kNBo0wT8gAofCSUexRahWB1tCFKSpoQSHoC1HQYggCBwMxUWxIb5yn7g4eM+9z8N9CJ6zns/9fN7nnO/9fru0eXW1OV8H4L+8gdt4SuHzHeF1UY1VuYH1DKDIO/Yn8OE6YRWAMHyYko5ZvGs1wBIWEwAOMYafrQboxgNMY+aK+Ues4A++4qIItMoTNDzj2zjlUC5kGL+KQvP7zQCEz28MZIY/cKtMeGibARhBhDbWJh7XCTCJCG2sBSzXCRBhL3OB9/GpToDPuJcL7MdJnQDH6MsCv2O0bHgzRXgH+7nADTypEyAaUL7FvsCrOgFW8TwXOI6dOgG+4G6zBVi1BmIWnOFGBhDD5maV01cFiGJ7nws8zebBeRWIlFYcJ51HL2LYxIzvuRJ2gF28xV4ZkBSA6O/xm6WsLUylCBuaFIA5rCWabuNRovZSlgIQBfYNgwnGz/AmQfdPkgJQxq+0tgPQuYG/4qczITS94xkAAAAASUVORK5CYII="
+    />
+    <img class="intLink" title="Underline" onclick="myCommand('underline');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABu0lEQVRYR+3WT6hNURgF8N8jDMxeUiQMvVJKiIkBycDA2L+HUExMlJSpkgxkovxPUTKSIknpDZQSA5KJAaUoIWXAQPTVvbWd7rHP3tQ1uHt49lrrW2ed/X37jBnyGhtyfSMD/30CG3AX0/AEKzqemeBsxE9sxfU2Xi6BC9iTkMfxOWMiMB8TTGjsqzVwCbsT8pyG+CDdwHxINkIjfYnfOLkERgZGCYwSONfo4bmNFuvShhext3YOHMPRhLwMzzKDaAleJpgTOFJrYBcuJ+TDOJkxcABnEsx+nK01sBBvEnKM2KV43yI4Hc8xkezPx7taA8G7j/WJwGtsx8OG6Gycx5bk+QOs+1NiuVEc3JV41LsR+1pxy13DDXzFchzCvKTYD6zC0781EPyDOJ359s3tHbia43RJoK8x2Yt4Zkb0C7bhdq547JcYCHwcrujrNQPE4wq+guP41KV4jYG+7iKsxuLeCX/R+9ZxNopWaQJF4l3AgwxEvLO6kCswb/Eq5TUNrMVUhXAJJVrzcZ/QNLAZN0vUKrBR41abgfgNv1chWkLZhDttBmZgJxaUKBZgv+MUvrUZKND6N9Cht+EvkKpaIdF40z8AAAAASUVORK5CYII="
+    />
+    <img class="intLink" title="Left align" onclick="myCommand('justifyLeft');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABT0lEQVRYR+3XPy8FURCH4efSqCh8AInCB1BJhBC1WqVR0CglGgUqtCg11DoSEolEFFSi1KtEgdK/yCR7q5s4a7O7dwvTzpwz75md89s5LcxgE2PoUY994xILLTxgpJ68HVnOA+AZg10CeAyAVWx1CWAtAMImMIXemkA+cYGbNkBNeTvT/AM0ogJDWMyEqIwmfMcJ9hCC86tFBa6yW5CK/at/HRupRQHwiv5UYAH/HUZT6wLgEPOpwAL+fSyn1gVAH1YwXZIQRQ+cYjdvD6QgK/U34hpWesLU5o2oQNlClDp0+L+yiWinSiHKA3JUpRDlAXirUojyAJxVIUR5EkcPxD9ouxG3IA9xZTH/FahiLG//De/zfLcAiEdJPE7KtOjyORynNg2AFwykAgv4b7M5MzkTXmO8QILUkhhMZ1NBUYFhHGCypOf5RzYRLeEpBfADWYoyrXaYJZIAAAAASUVORK5CYII="
+    />
+    <img class="intLink" title="Center align" onclick="myCommand('justifyCenter');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABaUlEQVRYR+3XTysFURjH8c9VWFig2FGSnYVESawtLO28AhtvgK1/Gy+AN8DSVlnZWQglsrVTyp+klESP3Jo0023u3HvNwtmcaTrn+X3nOec5vzMVf9wqf6wvCdCPLYw0EeoBmzitaiQBLjDWRPFq6IAYwku8qAJE/4aOFgCExDROkgDxvIOlFgBcYhwfvwHaMIvom9nO8Zy2B5opmhm7VGVYugxMYRmDBcii1PawnxUjawk6cYeeAuLJqRM4S4uVBdCFR7Q3CGAOR3kAYuwqNhoAcIh5fOYFaIB27RD/ZViqDCxiHcO1V67uEVFZu1hJ84Lw6d66Q+ebOIrr3254j758ceoenQowg7UW2HEcy7EM361Um7DufBaZWPoMxBV9oMAXhh2HC6b6QK09ED4eZ0PRdoNJvOYxo248FVVOzF/AQR6AuBnfFkx/Ve/95xp+lQcgxsbfS5wLRa9k2zjOymbpq6CB2yA91Bcs3S4htjOMDwAAAABJRU5ErkJggg=="
+    />
+    <img class="intLink" title="Right align" onclick="myCommand('justifyRight');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABNElEQVRYR+3XvyuFURzH8dctGfwDLGbKqGyKyewPMAmlDFKkXCUGUrLzB1iUkWKwG5XJIHLNSn5MOnUf3fTc+zzDeZ57h+fMp+/n/f18zzl9Tk2XV63L+hKAAZxhBv0lQD1iGs8JwA62SxBuldhDPQHYx0bJAEdYSwAGcYuREiB+cIUlNHrmEJbQeLpE5UCWA1tYxHDEGX3gAst47wQwioeIwv9LHWK9E8AY7gsEOMZqN0YQenrCZOtTXGCjnUtnOVA4WAXQzoETzPOXF2KP4hKz+EoDGMddbMWUershg6QBFH3/E5a2AGHDCkJg6CvAiZAHzpsj/qxuQeVAHgfmcBrxvxAO4XUzlL7kAXhDSM2xV2YeSAQbGIqtjvAX2czjwBQOMBEJ4hs3WMBrHoBIuj0ay38B3aQtIR26FzwAAAAASUVORK5CYII="
+    />
+    <img class="intLink" title="Numbered list" onclick="myCommand('insertorderedlist');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB4ElEQVRYR9XWTatOURTA8d8VA59BDCQxMGCgcMMAE6EYKAYGXm/y8gnkCygyQTJgwkDpKgMGXkoZUAYiiZEkYyMhrTpbx3HOeZy9L/exhuestdd/r7e9JsyyTMyyfwlgEptqMM9w+1/AJYAH2FBz+BUL8bEF4ijOYm4h4AVMJYBTOM3PiMTZy/C6xck0thU6D/PHmGzWwA7cqg7vAoj/oVcqjyLqOQB7cKjQ+zecw3QOQKHvX83/S4C9ODggDO+qlEVn/SY5EcgpwjV4MlMAOW0Ygy7abmQENuNupbUEb1tsjuPMgEH0Gcvx/k8A5mEf5uP8gDxnq47NY5R9g1LDsYnAFHa33CZGZvR89PJfkRSBh1jf4eEijtT+rcL2Qpq42HW8SQDxup3AnNrBq6tuuIL9te83sbMQIMzvYUtfDcQusBRNgJxB1Mbbug/UFbsALg18C7qCdQdbUwR24VhDsysFobYOMbRK5CU+JYD72NhxWiwOJ0s89dkmgMjH2moHjOpM8h2X8aGgC6KFr3ZBNAGiwEbtezldsBLP2yByAHK6YORznFLQhPyCA7hW+xEpapuafalegRd9EejbcqLtDteMF2HxgKKMfeDpqBpY0NPbN/BqgMNBqmPzGg6inknlHxPrXyHX7DViAAAAAElFTkSuQmCC"
+    />
+    <img class="intLink" title="Dotted list" onclick="myCommand('insertunorderedlist');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABV0lEQVRYR+3WMUhVURzH8c9zanAMUXdDArcGCQcHdRFxEnRJdAjBrYYI97a2FhdnhwaTEKIWoYJcbAgRAkdFwVVoeBAH/gdKkHefvMO9wzvTH+7//n+/+73n/M+/pebVqllf30BjCIxhBQM4xofYG+NYLrBP2tjF70zgE+ZC6AKjEW/jeQEDqeTnpJkNfMPTELrGw4h3sFbIQNKcygY+Yj6EfmEi4jd4XcjAQdLMBobwOISOcPOP6CQeFDBxgqvGnIICH1itZJ9AJrCJpYB2io2IF/CyGszKWes4y9l19IFF7DfOwBZmw9UPvIr4GRKyXq0/0VnPbxPolUDXdfrHsDEE7rqMBvGk6x/b+YU0kHxHu9N1/BYvOte7V8b71PzqaETZ7X8DSRqPZuLJJYYjfofUpkusQ0xnAo9i+ExD6U/sheIIVgsNJF/wtTGnoATiSjX7BGon8BclgDshCk8o7gAAAABJRU5ErkJggg=="
+    />
+    <img class="intLink" title="Add indentation" onclick="myCommand('outdent');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABfUlEQVRYR+3XIUhfURTH8c+/OMdMwpCVhTFYFAYGgzYZLBq2MA3CimiSiQtbmRiUaRENCktjoGAXBJthhmVXFoSVJatikAu+P0//Mq7v3v/7G3zllnvO+Z5zzzn8XkOHv0aH4ysAHmINb/CozVBn2Md7/C0APuNLmwNfd7+EuQJgGTM1AyziYwHwBJsYQVcNIL8xjH93pgmHMF8h8wXsVbBrmhQVGMVOBUfj+F7BLjvAUzyLBDnFL4SzuQdSKnCEg1s27wle4TDHE/TjQ2T25Wth8U3nAHiMlQoAs/iaA+BHyASv0R0JEp4t2JznALgTUxCZeOu1+wrkqMAWVvEOPRFvcaMeSFlEfWGcIgL/Vw+kALzApwoAV/RACsAuNi73wINIkBY9kAKQZQ90XA9EVi7/tbIkG8Pz/CFaPAYdEGT5z7IemMC3GoKXQ7zFdlGBdUzWDBBiThUAAwjj1FsTRNiGg0GalXsgzPBLxM5yCusfHJd7IMVZkm3Hf0wuAAA9TSGsYvMPAAAAAElFTkSuQmCC"
+    />
+    <img class="intLink" title="Delete indentation" onclick="myCommand('indent');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABa0lEQVRYR+3XIUglURjF8d8DcUEwu1tELJrXaFiLshi1msRVZMEggqA8QRAUFhHBIBgMYjVaTCKsoCDGNWhww7Y1r0HkwrvyDMK8mcvMBqfc8t3v/O/HuTNnaip+ahXriwAdOMQo2kuAusMQfkeAVayUINwssYZ6BNjAYskAW5iPAF04RV8JEI84wTf8+W9MWOTgw1jO0aCOsxQTmMBBDoBxHDUDfMBnhDXLE67SPZIA9OAcH7MoN2qCmQbRn2IC25hrQTyWbuI6BcACfrQI8IQxdKYAaMNOY5xZOB6wjotUHsgi+lZNEhO+A1Q+gTx54Be+YCTFLcibB5ZCqEgBkDcPhFBxkwKg1TzwD8eYxtcUAJWbsAhA5XmgCPxLLA9NZvCpULfsm2+jb2IgmcJe9v1JKiexHwHCl/B7krbZm+xiNgIM4GdJf0UB8W/j+l42Z8Ju9GY/QO7K8A65QlhfmTB3xyIbU8TyIvqeAaLDTSG9UaIfAAAAAElFTkSuQmCC"
+    />
+    <img class="intLink" title="Hyperlink" onclick="var sLnk=prompt('Write the URL here','http:\/\/');if(sLnk&&sLnk!=''&&sLnk!='http://'){myCommand('createlink',sLnk)}"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADMklEQVRYR8XXWcjmYxgG8N8YB0PJZEoTkW0c2LJHDDHlQLJEObBkKykHZB8HZJlEpBhZSqFIJMyRA+uMOJkYS9YajKVkCUOYLF1fz396/Hve9/t/835m7pPve5/3eZ7reu7luu93ji1sc2YZ/0CcjH0xD+/iY7yKz1tYs0XgKNyNQ0c86C88iKuxvt4zGwROwdPYeoA3P8NxyN8pm5TABXgIWw0A77YkLIfhj0kJ5OXP9oB/wTI8j3XYDzfihN6+u3DFpAQW4NrymoOxGmfh64Y3luLWav0f7J7EnDQEM/C8Z3BadeBSLN+cBE7CiorAYzh3pgQOxyEltnHhJ/gAb2DNNO5YiG+qPS9hyVACR+AR7D0G5ClcNUpwsA/er84/h1OHELgQD2DugIB/j6PxYWPvJbivWo9wXT4dgSTKPQOA6y0pv0jyD9Vi3B9J3q5ai2SvGEegBf477sXj+Ai7JJFwXSVqP2J/fFXAdsArZa3D/xJ7YMMoAi3wvOxEvNfwyEVFEQN+bGlC2dYCz/rpTJVlU4pb4GtLbFsi0/E5owDHM7HtsbL38qxfg9u7Q30PXIz7ey9MqSWxvi3re+HXXkn1nRLwl3FQ74ubcEO9VhM4BqnNOtvfwfFIdsdC5AX8jSNHhGN+uacPflvJlf9wqgkELMnTWbQ94D+XhWjAW9i2fE43y4uW46cSzkhtyivJWdtUyTVyZ2MO5GWJV2cZGqJ031VrIRcCfT34s8Q+BOsy646OBM+GzgN34MoKLP/f2WB8Nh4dOEeE2C24ufXyfhKmr6e/d7YIn444uASXIc1llGXoOLP0iXH4Gz2QoTFJGEuvzniVRBtnmQPPw2LsWsDSmCI6Dw84P3V3F4I0hkhjZwdUYjINj8m+7ghcX+LV3RZpTdn879YRSMyjYN3nDSUkbzYY7IYnkVE7A0bi/VpVrjMiXetAf2T6rbThJ0p89ywangrZpoeSUTuxn7HVBNI43m6IyLhLk7CR74zmm2T9XhDxWYWdBtwWsTq//CgZsL29pdWOdy4Jec6YKeh15Pt0yYls3ECyY2a2MoSmzr8oQ2jC9GLRi4nAax2Y+KJNveBfbFOdIaeufgAAAAAASUVORK5CYII="
+    />
+    <img class="intLink" title="Paste" onclick="myCommand('insertImage','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACfElEQVRYR82Xy2sTURTGv28gBkHEhaCL+gBBK6Ibd1p1Z0iEzr3BgDsRFRFpqVv/AXeK1pV25U4CuSeBMupKqF1IF4IgonYhKIgIVlwIY5McmdKhMbTN5O1d3sf5fnPuOfecIYY8OGR9/FcAnjHmGIAdffbKTxF5A6Ae6ax4IJ/Pj6jqcwCH+ywem39H8mypVPqyAmCtfQTgyoDEY5kZ59zVGGAOwNiAAV46506tABhj5kme6BWAqgYkFwAcB3BuA7vzzrmxngNE4iKSi0V93z/veV5xHYj+AAC46Jx73ChojHlP8mATRH8AVPWWiNxuEIvS+xvJnYMCWFLVbLlcflUoFLZUq9U7AG704gpqqnqN5E0ARzYLWFVVkm9VdYTkRg9be1egqvdEZMpaewbAix5kTHIAVV0Kw3B/EAS/VtPWkTRNEH8AXFfVKZJHEwC2BTAhIg9io/l8fp+qfgSQiudUdVJEpo0xUe4vkGxV6JIBqOpiKpUaLRaLtcavstZGwRXFA6I6IiKZeN0Yc5fkVAsvJAbIiEhUqP4Z2Wx2ezqd/hRNhmF4KAiC7/GGQqGwtVqtfgAwsglEa4DmV63Z2Pj4+EkAvyuVyuvmNd/3M57nPe0GoFar1UYrlcpigoBad4u1thQV245qgapOi8hkp+LRuVwutzudTkfBuq2thyhKu+Xl5QOzs7NL3QCspuwEyfvtAjwRkQvdiq+epzHmK8ldTfY2DkJVDQE8BPCjWwiSewFcassD3YomPL/mAWvtwFsyVZ0TkdNxRzRD8nJC8l5tW2tKfd/f43nes0G25fV6PVMulz83Fozh/Zj0yqed2GlVMjux2daZoQP8BdotTTCNk4klAAAAAElFTkSuQmCC');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACfElEQVRYR82Xy2sTURTGv28gBkHEhaCL+gBBK6Ibd1p1Z0iEzr3BgDsRFRFpqVv/AXeK1pV25U4CuSeBMupKqF1IF4IgonYhKIgIVlwIY5McmdKhMbTN5O1d3sf5fnPuOfecIYY8OGR9/FcAnjHmGIAdffbKTxF5A6Ae6ax4IJ/Pj6jqcwCH+ywem39H8mypVPqyAmCtfQTgyoDEY5kZ59zVGGAOwNiAAV46506tABhj5kme6BWAqgYkFwAcB3BuA7vzzrmxngNE4iKSi0V93z/veV5xHYj+AAC46Jx73ChojHlP8mATRH8AVPWWiNxuEIvS+xvJnYMCWFLVbLlcflUoFLZUq9U7AG704gpqqnqN5E0ARzYLWFVVkm9VdYTkRg9be1egqvdEZMpaewbAix5kTHIAVV0Kw3B/EAS/VtPWkTRNEH8AXFfVKZJHEwC2BTAhIg9io/l8fp+qfgSQiudUdVJEpo0xUe4vkGxV6JIBqOpiKpUaLRaLtcavstZGwRXFA6I6IiKZeN0Yc5fkVAsvJAbIiEhUqP4Z2Wx2ezqd/hRNhmF4KAiC7/GGQqGwtVqtfgAwsglEa4DmV63Z2Pj4+EkAvyuVyuvmNd/3M57nPe0GoFar1UYrlcpigoBad4u1thQV245qgapOi8hkp+LRuVwutzudTkfBuq2thyhKu+Xl5QOzs7NL3QCspuwEyfvtAjwRkQvdiq+epzHmK8ldTfY2DkJVDQE8BPCjWwiSewFcassD3YomPL/mAWvtwFsyVZ0TkdNxRzRD8nJC8l5tW2tKfd/f43nes0G25fV6PVMulz83Fozh/Zj0yqed2GlVMjux2daZoQP8BdotTTCNk4klAAAAAElFTkSuQmCC"
+    />
+  </div>
+  <div id="textBox" contenteditable="true"><p>Lorem ipsum</p></div>
+</body>
+<script>
+  function myCommand(cmd, val) {
+    document.execCommand(cmd, false, val);
+  }
+</script>
+
+</html>
