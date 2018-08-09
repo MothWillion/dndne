@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>drag-clone</title>
+  <style>
+    .sendbox{width: 200px;height: 400px;border: 1px solid red;float: left;}
+    .receivebox{width: 500px;height: 400px;border: 1px solid green;float: left;margin-left: 40px;}
+    .text1{width: 150px;height: 33px;color: blue;font-size: 20px;font-family: monospace;}
+    .text2{width: 160px;height: 38px;color: yellow;font-size: 26px;font-family: 'Microsoft Yahei';}
+    .text3{width: 170px;height: 45px;color: purple;font-size: 30px;font-family: Arial;}
+  </style>
+</head>
+<body>
+  <div id="from" class="sendbox">
+    <div class="draggable text1">sometext1</div>
+    <div class="draggable text2">sometext2</div>
+    <div class="draggable text3">sometext3</div>
+    <div class="text4">sometext4</div>
+  </div>
+  <div id="to" class="receivebox"></div>
+</body>
+<script>
+  var activeId = 0;
+  var styleObj = {};
+  // 获取元素css属性的方法
+  function getCSS(elem, styl){
+    return window.getComputedStyle(elem, null)[styl] || elem.currentStyle[styl];
+  }
+  function createDom(styleObj,pos){
+    var dom = document.createElement("div");
+    dom.style.position = "absolute";
+    dom.style.height = styleObj.height;
+    dom.style.width = styleObj.width;
+    dom.style.color = styleObj.color;
+    dom.style.fontSize = styleObj.fontSize;
+    dom.style.fontFamily = styleObj.fontFamily;
+    dom.innerText = styleObj.innerText;
+    dom.style.left = pos.left + "px";
+    dom.style.top = pos.top + "px";
+    dom.setAttribute("class", "dndne");
+    return dom;
+  }
+  // 鼠标按下获取取到的dom信息
+  document.addEventListener('mousedown',function(event){
+    var e = event || window.event;
+    var target = e.target || e.srcElement;
+    // 只兼容 ie10+ 火狐 和 谷歌
+    var classListStr = target.classList.toString() || target.classList.value;
+    if(classListStr.indexOf('draggable') !== -1){
+      activeId ++;
+      // 取到我们想要的css属性并放到一个对象中
+      styleObj.height = getCSS(target,'height');
+      styleObj.width = getCSS(target,'width');
+      styleObj.color = getCSS(target,'color');
+      styleObj.fontSize = getCSS(target,'fontSize');
+      styleObj.fontFamily = getCSS(target,'fontFamily');
+      styleObj.innerText = target.innerText;
+      console.log(e);
+    }
+  });
+  document.addEventListener("mousemove",function(event){
+    var e = event || window.event;
+    var target = e.target || e.srcElement;
+    if(activeId === 1){
+      var dom = createDom(styleObj,{
+        left: e.clientX,
+        top: e.clientY
+      });
+      document.body.appendChild(dom);
+    }
+  });
+  document.addEventListener('mouseup',function(event){
+    var e = event || window.event;
+    var target = e.target || e.srcElement;
+    var classListStr = target.classList.toString() || target.classList.value;
+    if(classListStr.indexOf('dndne') !== -1){
+      activeId--;
+    }
+  });
+</script>
+</html>

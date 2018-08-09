@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>editor</title>
   <style>
-    img{width: 20px;}
+    .intLink{width: 20px;}
   </style>
 </head>
 
@@ -87,7 +87,7 @@
     <img class="intLink" title="Paste" onclick="myCommand('insertImage','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACfElEQVRYR82Xy2sTURTGv28gBkHEhaCL+gBBK6Ibd1p1Z0iEzr3BgDsRFRFpqVv/AXeK1pV25U4CuSeBMupKqF1IF4IgonYhKIgIVlwIY5McmdKhMbTN5O1d3sf5fnPuOfecIYY8OGR9/FcAnjHmGIAdffbKTxF5A6Ae6ax4IJ/Pj6jqcwCH+ywem39H8mypVPqyAmCtfQTgyoDEY5kZ59zVGGAOwNiAAV46506tABhj5kme6BWAqgYkFwAcB3BuA7vzzrmxngNE4iKSi0V93z/veV5xHYj+AAC46Jx73ChojHlP8mATRH8AVPWWiNxuEIvS+xvJnYMCWFLVbLlcflUoFLZUq9U7AG704gpqqnqN5E0ARzYLWFVVkm9VdYTkRg9be1egqvdEZMpaewbAix5kTHIAVV0Kw3B/EAS/VtPWkTRNEH8AXFfVKZJHEwC2BTAhIg9io/l8fp+qfgSQiudUdVJEpo0xUe4vkGxV6JIBqOpiKpUaLRaLtcavstZGwRXFA6I6IiKZeN0Yc5fkVAsvJAbIiEhUqP4Z2Wx2ezqd/hRNhmF4KAiC7/GGQqGwtVqtfgAwsglEa4DmV63Z2Pj4+EkAvyuVyuvmNd/3M57nPe0GoFar1UYrlcpigoBad4u1thQV245qgapOi8hkp+LRuVwutzudTkfBuq2thyhKu+Xl5QOzs7NL3QCspuwEyfvtAjwRkQvdiq+epzHmK8ldTfY2DkJVDQE8BPCjWwiSewFcassD3YomPL/mAWvtwFsyVZ0TkdNxRzRD8nJC8l5tW2tKfd/f43nes0G25fV6PVMulz83Fozh/Zj0yqed2GlVMjux2daZoQP8BdotTTCNk4klAAAAAElFTkSuQmCC');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACfElEQVRYR82Xy2sTURTGv28gBkHEhaCL+gBBK6Ibd1p1Z0iEzr3BgDsRFRFpqVv/AXeK1pV25U4CuSeBMupKqF1IF4IgonYhKIgIVlwIY5McmdKhMbTN5O1d3sf5fnPuOfecIYY8OGR9/FcAnjHmGIAdffbKTxF5A6Ae6ax4IJ/Pj6jqcwCH+ywem39H8mypVPqyAmCtfQTgyoDEY5kZ59zVGGAOwNiAAV46506tABhj5kme6BWAqgYkFwAcB3BuA7vzzrmxngNE4iKSi0V93z/veV5xHYj+AAC46Jx73ChojHlP8mATRH8AVPWWiNxuEIvS+xvJnYMCWFLVbLlcflUoFLZUq9U7AG704gpqqnqN5E0ARzYLWFVVkm9VdYTkRg9be1egqvdEZMpaewbAix5kTHIAVV0Kw3B/EAS/VtPWkTRNEH8AXFfVKZJHEwC2BTAhIg9io/l8fp+qfgSQiudUdVJEpo0xUe4vkGxV6JIBqOpiKpUaLRaLtcavstZGwRXFA6I6IiKZeN0Yc5fkVAsvJAbIiEhUqP4Z2Wx2ezqd/hRNhmF4KAiC7/GGQqGwtVqtfgAwsglEa4DmV63Z2Pj4+EkAvyuVyuvmNd/3M57nPe0GoFar1UYrlcpigoBad4u1thQV245qgapOi8hkp+LRuVwutzudTkfBuq2thyhKu+Xl5QOzs7NL3QCspuwEyfvtAjwRkQvdiq+epzHmK8ldTfY2DkJVDQE8BPCjWwiSewFcassD3YomPL/mAWvtwFsyVZ0TkdNxRzRD8nJC8l5tW2tKfd/f43nes0G25fV6PVMulz83Fozh/Zj0yqed2GlVMjux2daZoQP8BdotTTCNk4klAAAAAElFTkSuQmCC"
     />
   </div>
-  <div id="textBox" contenteditable="true"><p>Lorem ipsum</p></div>
+  <span id="textBox" contenteditable="true">Lorem ipsum</span>
 </body>
 <script>
   function myCommand(cmd, val) {
