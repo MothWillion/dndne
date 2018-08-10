@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/dndne.css">
+    <title>拖拽编辑插件</title>
+</head>
+
+<body>
+    <div id="dndne_box" style="position: relative;height: 949px;">
+        <div id="sendBox" class="sendBox">
+            <div class="d-title draggable">添加标题文字</div>
+            <br>
+            <div class="d-subtitle draggable">添加副标题文字</div>
+            <br>
+            <div class="d-context draggable">添加正文文字</div>
+            <br>
+            <div id="signature" class="signature draggable" style="top: 200px;left: 88px;">签章位置</div>
+        </div>
+        <div class="rightbox">
+            <div id="tools" class="tools">
+                <ul class="tool-list">
+                    <li id="tool_bold" class="tool-item tool-item1" title="加粗"></li>
+                    <li id="tool_underline" class="tool-item tool-item2" title="下划线"></li>
+                    <li id="tool_alignleft" class="tool-item tool-item3" title="左对齐"></li>
+                    <li id="tool_aligncenter" class="tool-item tool-item4" title="居中对齐"></li>
+                    <li id="tool_alignright" class="tool-item tool-item5" title="右对齐"></li>
+                    <li id="tool_delete" class="tool-item tool-item6" title="删除"></li>
+                    <li id="tool_save" class="tool-item tool-item7" title="保存修改"></li>
+                    <li id="tool_redo" class="tool-item tool-item10" title="重做">重做</li>
+                    <li id="tool_undo" class="tool-item tool-item11" title="撤销">撤销</li>
+                    <li id="tool_fullpage" class="tool-item tool-item8" title="全屏"></li>
+                    <li id="tool_escfull" class="tool-item tool-item9" title="退出全屏"></li>
+                </ul>
+            </div>
+            <div id="receiveBox" class="receiveBox">
+                <div id="canvas" class="canvas"></div>
+            </div>
+            <div id="pages" class="pages">
+                <div class="pg-title">页面</div>
+                <ul id="page_list" class="page-list">
+                    <li class="page-item active">
+                        <div id="page1" class="min-page">
+                            <div class="page-boxes"></div>
+                        </div>
+                        <div class="page-mask">正在编辑此页</div>
+                        <div class="page-copy" title="复制此页"></div>
+                        <div class="page-delete" title="删除此页"></div>
+                        <div class="page-num">1</div>
+                    </li>
+                </ul>
+                <div class="add-page-box">
+                    <div id="add_page" class="add-page"></div>
+                </div>
+            </div>
+            <div id="scaleTool" class="scaleTool">
+                <div class="stool" id="origin">1:1</div>
+                <div class="stool fs24" id="reduce">-</div>
+                <div class="stool2" id="scaleVal">100%</div>
+                <div class="stool fs24" id="enlarge">+</div>
+            </div>
+        </div>
+        <div id="pop_mask" class="pop-mask">
+            <div id="delete_pop" class="delete-pop">
+                <div class="pop-title">提示</div>
+                <div class="pop-tip">删除页面后画布会消失哦！</div>
+                <div class="pop-btns">
+                    <input id="pop_cancel" class="pop-btn" type="button" value="取消">
+                    <input id="pop_delete" class="pop-btn color-p" type="button" value="继续删除">
+                </div>
+            </div>
+        </div>
+        <div id="delete_tip1" class="delete-tip1">最后一页不能删除！</div>
+        <div id="delete_tip2" class="delete-tip2">页面删除成功！</div>
+        <div id="delete_tip3" class="delete-tip3">正在编辑的页面不能删除！</div>
+        <div id="delete_tip4" class="delete-tip4">第一页不能删除！</div>
+    </div>
+</body>
+<script src="./js/utils.js"></script>
+<script src="./js/dndne.js"></script>
+<script>
+    var dndne = new Dndne();
+    dndne.run();
+</script>
+
+</html>

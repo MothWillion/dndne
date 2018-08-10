@@ -8,6 +8,40 @@
   <title>editor</title>
   <style>
     .intLink{width: 20px;}
+    .sendbox {
+      width: 200px;
+      height: 400px;
+      border: 1px solid red;
+      float: left;
+    }
+    .receivebox {
+      width: 500px;
+      height: 400px;
+      border: 1px solid green;
+      float: left;
+      margin-left: 40px;
+    }
+    .text1 {
+      width: 150px;
+      height: 33px;
+      color: blue;
+      font-size: 20px;
+      font-family: monospace;
+    }
+    .text2 {
+      width: 160px;
+      height: 38px;
+      color: yellow;
+      font-size: 26px;
+      font-family: 'Microsoft Yahei';
+    }
+    .text3 {
+      width: 170px;
+      height: 45px;
+      color: purple;
+      font-size: 30px;
+      font-family: Arial;
+    }
   </style>
 </head>
 
@@ -87,12 +121,149 @@
     <img class="intLink" title="Paste" onclick="myCommand('insertImage','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACfElEQVRYR82Xy2sTURTGv28gBkHEhaCL+gBBK6Ibd1p1Z0iEzr3BgDsRFRFpqVv/AXeK1pV25U4CuSeBMupKqF1IF4IgonYhKIgIVlwIY5McmdKhMbTN5O1d3sf5fnPuOfecIYY8OGR9/FcAnjHmGIAdffbKTxF5A6Ae6ax4IJ/Pj6jqcwCH+ywem39H8mypVPqyAmCtfQTgyoDEY5kZ59zVGGAOwNiAAV46506tABhj5kme6BWAqgYkFwAcB3BuA7vzzrmxngNE4iKSi0V93z/veV5xHYj+AAC46Jx73ChojHlP8mATRH8AVPWWiNxuEIvS+xvJnYMCWFLVbLlcflUoFLZUq9U7AG704gpqqnqN5E0ARzYLWFVVkm9VdYTkRg9be1egqvdEZMpaewbAix5kTHIAVV0Kw3B/EAS/VtPWkTRNEH8AXFfVKZJHEwC2BTAhIg9io/l8fp+qfgSQiudUdVJEpo0xUe4vkGxV6JIBqOpiKpUaLRaLtcavstZGwRXFA6I6IiKZeN0Yc5fkVAsvJAbIiEhUqP4Z2Wx2ezqd/hRNhmF4KAiC7/GGQqGwtVqtfgAwsglEa4DmV63Z2Pj4+EkAvyuVyuvmNd/3M57nPe0GoFar1UYrlcpigoBad4u1thQV245qgapOi8hkp+LRuVwutzudTkfBuq2thyhKu+Xl5QOzs7NL3QCspuwEyfvtAjwRkQvdiq+epzHmK8ldTfY2DkJVDQE8BPCjWwiSewFcassD3YomPL/mAWvtwFsyVZ0TkdNxRzRD8nJC8l5tW2tKfd/f43nes0G25fV6PVMulz83Fozh/Zj0yqed2GlVMjux2daZoQP8BdotTTCNk4klAAAAAElFTkSuQmCC');" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACfElEQVRYR82Xy2sTURTGv28gBkHEhaCL+gBBK6Ibd1p1Z0iEzr3BgDsRFRFpqVv/AXeK1pV25U4CuSeBMupKqF1IF4IgonYhKIgIVlwIY5McmdKhMbTN5O1d3sf5fnPuOfecIYY8OGR9/FcAnjHmGIAdffbKTxF5A6Ae6ax4IJ/Pj6jqcwCH+ywem39H8mypVPqyAmCtfQTgyoDEY5kZ59zVGGAOwNiAAV46506tABhj5kme6BWAqgYkFwAcB3BuA7vzzrmxngNE4iKSi0V93z/veV5xHYj+AAC46Jx73ChojHlP8mATRH8AVPWWiNxuEIvS+xvJnYMCWFLVbLlcflUoFLZUq9U7AG704gpqqnqN5E0ARzYLWFVVkm9VdYTkRg9be1egqvdEZMpaewbAix5kTHIAVV0Kw3B/EAS/VtPWkTRNEH8AXFfVKZJHEwC2BTAhIg9io/l8fp+qfgSQiudUdVJEpo0xUe4vkGxV6JIBqOpiKpUaLRaLtcavstZGwRXFA6I6IiKZeN0Yc5fkVAsvJAbIiEhUqP4Z2Wx2ezqd/hRNhmF4KAiC7/GGQqGwtVqtfgAwsglEa4DmV63Z2Pj4+EkAvyuVyuvmNd/3M57nPe0GoFar1UYrlcpigoBad4u1thQV245qgapOi8hkp+LRuVwutzudTkfBuq2thyhKu+Xl5QOzs7NL3QCspuwEyfvtAjwRkQvdiq+epzHmK8ldTfY2DkJVDQE8BPCjWwiSewFcassD3YomPL/mAWvtwFsyVZ0TkdNxRzRD8nJC8l5tW2tKfd/f43nes0G25fV6PVMulz83Fozh/Zj0yqed2GlVMjux2daZoQP8BdotTTCNk4klAAAAAElFTkSuQmCC"
     />
   </div>
-  <span id="textBox" contenteditable="true">Lorem ipsum</span>
+  <div id="from" class="sendbox">
+    <div class="draggable text1">sometext1</div>
+    <div class="draggable text2">sometext2</div>
+    <div class="draggable text3">sometext3</div>
+    <div class="text4">sometext4</div>
+  </div>
+  <div id="to" class="receivebox"></div>
 </body>
 <script>
   function myCommand(cmd, val) {
     document.execCommand(cmd, false, val);
   }
+  var draggy = false;
+  var dnddy = false;
+  var isDragging = false;
+  var styleObj = {};
+  var EventListen = {
+    addEvent: function (node, eventName, handler) {
+        if (node.addEventListener) {
+            node.addEventListener(eventName, handler);
+        } else if (node.attachEvent) {
+            node.attachEvent("on" + eventName, handler);
+        } else {
+            node["on" + eventName] = handler;
+        }
+    },
+    removeEvent: function (node, eventName, handler) {
+        if (node.removeEventListener) {
+            node.removeEventListener(eventName, handler);
+        } else if (node.detachEvent) {
+            node.detachEvent("on" + eventName, handler);
+        } else {
+            node["on" + eventName] = null;
+        }
+    }
+};
+// 阻止事件冒泡
+  function stopBubble(event) {
+    var e = event || window.event;
+    if (e && e.stopPropagation) {
+      e.stopPropagation()
+    } else if (window.event) {
+      window.event.cancelBubble = true;
+    }
+  }
+// 阻止默认行为
+  function stopDefault(event) {
+    var e = event || window.event;
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    } else {
+      window.event.returnValue = false;
+    }
+    // return false;
+  }
+  // 获取元素css属性的方法
+  function getCSS(elem, styl) {
+    return window.getComputedStyle(elem, null)[styl] || elem.currentStyle[styl];
+  }
+
+  function createDom(styleObj) {
+    var dom = document.createElement("div");
+    dom.style.position = "absolute";
+    dom.style.height = styleObj.height;
+    dom.style.width = styleObj.width;
+    dom.style.color = styleObj.color;
+    dom.style.fontSize = styleObj.fontSize;
+    dom.style.fontFamily = styleObj.fontFamily;
+    dom.innerText = styleObj.innerText;
+    dom.setAttribute("class", "dndne active");
+    return dom;
+  }
+  // 鼠标按下获取取到的dom信息
+  EventListen.addEvent(document,'mousedown', function (event) {
+    var e = event || window.event; 
+    var target = e.target || e.srcElement;
+    // 只兼容 ie10+ 火狐 和 谷歌
+    isDragging = true;
+    var classListStr = target.getAttribute("class");
+    if (classListStr.indexOf('draggable') !== -1) {
+      stopDefault(e);
+      draggy = true;
+      // 取到我们想要的css属性并放到一个对象中
+      styleObj.height = getCSS(target, 'height');
+      styleObj.width = getCSS(target, 'width');
+      styleObj.color = getCSS(target, 'color');
+      styleObj.fontSize = getCSS(target, 'fontSize');
+      styleObj.fontFamily = getCSS(target, 'fontFamily');
+      styleObj.innerText = target.innerText;
+      styleObj.x = e.offsetX;
+      styleObj.y = e.offsetY;
+      var dom = createDom(styleObj);
+      dom.style.left = e.pageX - parseInt(styleObj.x) + "px";
+      dom.style.top = e.pageY - parseInt(styleObj.y) + "px";
+      document.body.appendChild(dom);
+    }
+    if(classListStr.indexOf('dndne') !== -1){
+      // console.log("dndne");
+      styleObj.x = e.offsetX;
+      styleObj.y = e.offsetY;
+      target.setAttribute("class","dndne dndneThis");
+      dnddy = true;
+    }
+    if(target.getAttribute("contenteditable")===true){
+      isDragging = false;
+    }
+  });
+  EventListen.addEvent(document,"mousemove", function (event) {
+    var e = event || window.event;
+    stopDefault(e);
+    var activeDnd = document.querySelectorAll(".active")[0];
+    var dndneThis = document.querySelectorAll(".dndneThis")[0];
+    if (draggy === true) {
+      activeDnd.style.left = e.pageX - parseInt(styleObj.x) + "px";
+      activeDnd.style.top = e.pageY - parseInt(styleObj.y) + "px";
+    }
+    if(dnddy === true && isDragging === true){
+      dndneThis.style.left = e.pageX - parseInt(styleObj.x) + "px";
+      dndneThis.style.top = e.pageY - parseInt(styleObj.y) + "px";
+    }
+  });
+  EventListen.addEvent(document,'mouseup', function (event) {
+    var e = event || window.event;
+    var target = e.target || e.srcElement;
+    var classListStr = target.getAttribute("class");
+    if (classListStr.indexOf('dndne active') !== -1) {
+      draggy = false;
+      target.setAttribute("class","dndne");
+    }
+    if (classListStr.indexOf('dndne dndneThis') !== -1) {
+      dnddy = false;
+      target.setAttribute("class","dndne");
+    }
+  });
+  EventListen.addEvent(document,'dblclick', function(event){
+    var e = event || window.event;
+    var target = e.target || e.srcElement;
+    var classListStr = target.getAttribute("class");
+    if (classListStr.indexOf('dndne') !== -1) {
+      isDragging = false;
+      target.setAttribute("contenteditable",true);
+    }
+  });
 </script>
 
 </html>

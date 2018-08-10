@@ -1,19 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>drag-clone</title>
   <style>
-    .sendbox{width: 200px;height: 400px;border: 1px solid red;float: left;}
-    .receivebox{width: 500px;height: 400px;border: 1px solid green;float: left;margin-left: 40px;}
-    .text1{width: 150px;height: 33px;color: blue;font-size: 20px;font-family: monospace;}
-    .text2{width: 160px;height: 38px;color: yellow;font-size: 26px;font-family: 'Microsoft Yahei';}
-    .text3{width: 170px;height: 45px;color: purple;font-size: 30px;font-family: Arial;}
+    .sendbox {
+      width: 200px;
+      height: 400px;
+      border: 1px solid red;
+      float: left;
+    }
+
+    .receivebox {
+      width: 500px;
+      height: 400px;
+      border: 1px solid green;
+      float: left;
+      margin-left: 40px;
+    }
+
+    .text1 {
+      width: 150px;
+      height: 33px;
+      color: blue;
+      font-size: 20px;
+      font-family: monospace;
+    }
+
+    .text2 {
+      width: 160px;
+      height: 38px;
+      color: yellow;
+      font-size: 26px;
+      font-family: 'Microsoft Yahei';
+    }
+
+    .text3 {
+      width: 170px;
+      height: 45px;
+      color: purple;
+      font-size: 30px;
+      font-family: Arial;
+    }
   </style>
 </head>
+
 <body>
+  <div style="width: 100%;height: 800px;"></div>
+  <div style="width: 333px;height:100%;float: left;border: 1px solid orange"></div>
   <div id="from" class="sendbox">
     <div class="draggable text1">sometext1</div>
     <div class="draggable text2">sometext2</div>
@@ -21,15 +58,57 @@
     <div class="text4">sometext4</div>
   </div>
   <div id="to" class="receivebox"></div>
+  
 </body>
 <script>
-  var activeId = 0;
+  var draggy = false;
+  var dnddy = false;
   var styleObj = {};
+  var EventListen = {
+    addEvent: function (node, eventName, handler) {
+        if (node.addEventListener) {
+            node.addEventListener(eventName, handler);
+        } else if (node.attachEvent) {
+            node.attachEvent("on" + eventName, handler);
+        } else {
+            node["on" + eventName] = handler;
+        }
+    },
+    removeEvent: function (node, eventName, handler) {
+        if (node.removeEventListener) {
+            node.removeEventListener(eventName, handler);
+        } else if (node.detachEvent) {
+            node.detachEvent("on" + eventName, handler);
+        } else {
+            node["on" + eventName] = null;
+        }
+    }
+};
+// 阻止事件冒泡
+  function stopBubble(event) {
+    var e = event || window.event;
+    if (e && e.stopPropagation) {
+      e.stopPropagation()
+    } else if (window.event) {
+      window.event.cancelBubble = true;
+    }
+  }
+// 阻止默认行为
+  function stopDefault(event) {
+    var e = event || window.event;
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    } else {
+      window.event.returnValue = false;
+    }
+    // return false;
+  }
   // 获取元素css属性的方法
-  function getCSS(elem, styl){
+  function getCSS(elem, styl) {
     return window.getComputedStyle(elem, null)[styl] || elem.currentStyle[styl];
   }
-  function createDom(styleObj,pos){
+
+  function createDom(styleObj) {
     var dom = document.createElement("div");
     dom.style.position = "absolute";
     dom.style.height = styleObj.height;
@@ -38,47 +117,75 @@
     dom.style.fontSize = styleObj.fontSize;
     dom.style.fontFamily = styleObj.fontFamily;
     dom.innerText = styleObj.innerText;
-    dom.style.left = pos.left + "px";
-    dom.style.top = pos.top + "px";
-    dom.setAttribute("class", "dndne");
+    dom.setAttribute("class", "dndne active");
     return dom;
   }
   // 鼠标按下获取取到的dom信息
-  document.addEventListener('mousedown',function(event){
-    var e = event || window.event;
+  EventListen.addEvent(document,'mousedown', function (event) {
+    var e = event || window.event; 
     var target = e.target || e.srcElement;
     // 只兼容 ie10+ 火狐 和 谷歌
-    var classListStr = target.classList.toString() || target.classList.value;
-    if(classListStr.indexOf('draggable') !== -1){
-      activeId ++;
+    var classListStr = target.getAttribute("class");
+    if (classListStr.indexOf('draggable') !== -1) {
+      stopDefault(e);
+      draggy = true;
       // 取到我们想要的css属性并放到一个对象中
-      styleObj.height = getCSS(target,'height');
-      styleObj.width = getCSS(target,'width');
-      styleObj.color = getCSS(target,'color');
-      styleObj.fontSize = getCSS(target,'fontSize');
-      styleObj.fontFamily = getCSS(target,'fontFamily');
+      styleObj.height = getCSS(target, 'height');
+      styleObj.width = getCSS(target, 'width');
+      styleObj.color = getCSS(target, 'color');
+      styleObj.fontSize = getCSS(target, 'fontSize');
+      styleObj.fontFamily = getCSS(target, 'fontFamily');
       styleObj.innerText = target.innerText;
-      console.log(e);
-    }
-  });
-  document.addEventListener("mousemove",function(event){
-    var e = event || window.event;
-    var target = e.target || e.srcElement;
-    if(activeId === 1){
-      var dom = createDom(styleObj,{
-        left: e.clientX,
-        top: e.clientY
-      });
+      styleObj.x = e.offsetX;
+      styleObj.y = e.offsetY;
+      var dom = createDom(styleObj);
+      dom.style.left = e.pageX - parseInt(styleObj.x) + "px";
+      dom.style.top = e.pageY - parseInt(styleObj.y) + "px";
       document.body.appendChild(dom);
     }
+    if(classListStr.indexOf('dndne') !== -1){
+      // console.log("dndne");
+      styleObj.x = e.offsetX;
+      styleObj.y = e.offsetY;
+      target.setAttribute("class","dndne dndneThis");
+      dnddy = true;
+    }
   });
-  document.addEventListener('mouseup',function(event){
+  EventListen.addEvent(document,"mousemove", function (event) {
+    var e = event || window.event;
+    stopDefault(e);
+    var activeDnd = document.querySelectorAll(".active")[0];
+    var dndneThis = document.querySelectorAll(".dndneThis")[0];
+    if (draggy === true) {
+      activeDnd.style.left = e.pageX - parseInt(styleObj.x) + "px";
+      activeDnd.style.top = e.pageY - parseInt(styleObj.y) + "px";
+    }
+    if(dnddy === true){
+      dndneThis.style.left = e.pageX - parseInt(styleObj.x) + "px";
+      dndneThis.style.top = e.pageY - parseInt(styleObj.y) + "px";
+    }
+  });
+  EventListen.addEvent(document,'mouseup', function (event) {
     var e = event || window.event;
     var target = e.target || e.srcElement;
-    var classListStr = target.classList.toString() || target.classList.value;
-    if(classListStr.indexOf('dndne') !== -1){
-      activeId--;
+    var classListStr = target.getAttribute("class");
+    if (classListStr.indexOf('dndne active') !== -1) {
+      draggy = false;
+      target.setAttribute("class","dndne");
+    }
+    if (classListStr.indexOf('dndne dndneThis') !== -1) {
+      dnddy = false;
+      target.setAttribute("class","dndne");
+    }
+  });
+  EventListen.addEvent(document,'dblclick', function(event){
+    var e = event || window.event;
+    var target = e.target || e.srcElement;
+    var classListStr = target.getAttribute("class");
+    if (classListStr.indexOf('dndne') !== -1) {
+      target.setAttribute("contenteditable",true);
     }
   });
 </script>
+
 </html>
