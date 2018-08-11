@@ -28,8 +28,7 @@ function getDomById(id) {
     return document.getElementById(id);
 }
 // 阻止事件冒泡
-function stopBubble(event) {
-    var e = event || window.event;
+function stopBubble(e) {
     if (e && e.stopPropagation) {
         e.stopPropagation()
     } else if (window.event) {
@@ -37,16 +36,25 @@ function stopBubble(event) {
     }
 }
 // 阻止默认行为
-function stopDefault(event) {
-    var e = event || window.event;
+function stopDefault(e) {
     if (e && e.preventDefault) {
         e.preventDefault();
     } else {
         window.event.returnValue = false;
     }
-    // return false;
+    return false;
 }
 // 获取元素css属性的方法
 function getCSS(elem, styl) {
-    return window.getComputedStyle(elem, null)[styl] || elem.currentStyle[styl];
+    return elem.currentStyle ? elem.currentStyle[styl] : window.getComputedStyle(elem, null)[styl];
+}
+// 三元解决不了的
+function returnARange(ret, range1, range2) {
+    if (ret <= range1) {
+        return range1;
+    } else if (ret >=range2) {
+        return range2;
+    } else {
+        return ret;
+    }
 }

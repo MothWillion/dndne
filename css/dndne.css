@@ -1,3 +1,6 @@
+*{
+  box-sizing: border-box;
+}
 html {
   height: 100%;
 }
@@ -66,22 +69,31 @@ li {
 
 .d-title {
   display: inline-block;
+  width: 172px;
   color: #333;
   font-size: 28px;
+  text-align: center;
+  border: 1px dashed transparent;
 }
 
 .d-subtitle {
   display: inline-block;
+  width: 130px;
   margin-top: 30px;
   color: #333;
   font-size: 18px;
+  text-align: center;
+  border: 1px dashed transparent;
 }
 
 .d-context {
   display: inline-block;
+  width: 76px;
   margin-top: 30px;
   color: #333;
   font-size: 12px;
+  text-align: center;
+  border: 1px dashed transparent;
 }
 
 .d-img {
@@ -536,4 +548,14 @@ li {
   width: 100%;
   height: 100%;
   background-color: #fff;
+}
+.dndne{
+  box-sizing: border-box;
+  border: 1px dashed transparent;
+}
+.dndne-current{
+  border: 1px dashed red!important;
+}
+.dndne-current.signature{
+  border: 3px dashed blue!important;
 }
