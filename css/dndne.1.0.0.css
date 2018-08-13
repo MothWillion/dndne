@@ -1,3 +1,6 @@
+*{
+  box-sizing: border-box;
+}
 html {
   height: 100%;
 }
@@ -6,7 +9,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: "microsoft yahei" !important;
+  font-family: "microsoft yahei"!important;
 }
 
 ul,
@@ -16,8 +19,33 @@ li {
   padding: 0;
 }
 
+.box {
+  height: 200px;
+}
+
 .draggable {
-  cursor: pointer;
+  position: relative;
+  cursor: move;
+}
+
+.dom {
+  border: 1px dashed transparent;
+}
+
+.dom:hover {
+  border: 1px dashed #e5e5e5;
+}
+
+.util {
+  position: absolute;
+  z-index: 10;
+  box-sizing: border-box;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  background-color: #626262;
+  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
 }
 
 .sendBox {
@@ -41,36 +69,36 @@ li {
 
 .d-title {
   display: inline-block;
+  width: 172px;
   color: #333;
   font-size: 28px;
+  text-align: center;
+  border: 1px dashed transparent;
 }
 
 .d-subtitle {
   display: inline-block;
+  width: 130px;
   margin-top: 30px;
   color: #333;
   font-size: 18px;
+  text-align: center;
+  border: 1px dashed transparent;
 }
 
 .d-context {
   display: inline-block;
+  width: 76px;
   margin-top: 30px;
   color: #333;
   font-size: 12px;
+  text-align: center;
+  border: 1px dashed transparent;
 }
 
-.signature {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  line-height: 120px;
-  text-align: center;
-  font-size: 18px;
-  color: red;
-  border: 2px dashed red;
-  border-radius: 60px;
-  cursor: pointer;
-  box-sizing: border-box;
+.d-img {
+  max-width: 60%;
+  margin-top: 40px;
 }
 
 .rightbox {
@@ -322,11 +350,9 @@ li {
 .add-page-box:hover .add-page {
   box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
 }
-
-.tool-list {
+.tool-list{
   padding-right: 180px;
 }
-
 .tool-item {
   float: left;
   box-sizing: border-box;
@@ -376,19 +402,24 @@ li {
   float: right;
   background: url(../images/fullpage.png) no-repeat center;
 }
-
 .tool-item9 {
   float: right;
   display: none;
   background: url(../images/escfull.png) no-repeat center;
 }
 
-.tool-item10 {
-  background: url(../images/redo.png) no-repeat center;
-}
-
-.tool-item11 {
-  background: url(../images/undo.png) no-repeat center;
+.signature,
+.sign {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  line-height: 120px;
+  text-align: center;
+  font-size: 18px;
+  color: red;
+  border: 2px dashed red !important;
+  border-radius: 60px;
+  cursor: move;
 }
 
 .delete-pop {
@@ -498,19 +529,17 @@ li {
   box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
   background: #fff url(../images/success.png) no-repeat 20px center;
 }
-
-.page-boxes {
+.page-boxes{
   position: absolute;
   top: 0;
   left: 0;
   transform: scale(0.2353);
   -webkit-transform: scale(0.2353);
-  -moz-transform: scale(0.2353);
-  -ms-transform: scale(0.2353);
+  -moz-transform: scale(0.2353);        
+  -ms-transform: scale(0.2353);         
   -o-transform: scale(0.2353);
 }
-
-.fullpage_pattern {
+.fullpage_pattern{
   display: none;
   position: fixed;
   top: 0;
@@ -520,76 +549,17 @@ li {
   height: 100%;
   background-color: #fff;
 }
-
-.stickl,
-.stickr {
+.dndne{
+  box-sizing: border-box;
+  border: 1px dashed transparent;
+}
+.dndne-current{
+  border: 1px dashed red!important;
+}
+.dndne-current.signature{
+  border: 3px dashed blue!important;
+}
+.stickl, .stickr{
   top: 50%;
   cursor: ew-resize;
-}
-.no-user-select{
-  -moz-user-select: none; 
-  -o-user-select:none; 
-  -khtml-user-select:none; 
-  -webkit-user-select:none; 
-  -ms-user-select:none; 
-  user-select:none;
-}
-.newdndne {
-  cursor: move;
-}
-.hide-style{
-  opacity: 0;
-}
-.dndne{
-  position: absolute;
-  box-sizing: border-box;
-}
-.dndne.active::before{
-  display: inline-block;
-  content: "";
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  outline: 1px dashed #d6d6d6;
-}
-.dndne.active .stick{
-  display: block;
-}
-.stick{
-  position: absolute;
-  display: none;
-  width: 10px;
-  height: 10px;
-  box-sizing: border-box;
-  background: #626262;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 0 3px 1px rgba(0,0,0,.15);
-}
-.stick-tl{
-  top: -5px;
-  left: -5px;
-}
-.stick-tr{
-  top: -5px;
-  right: -5px;
-}
-.stick-l{
-  top: 50%;
-  left: -5px;
-  margin-top: -5px;
-}
-.stick-r{
-  top: 50%;
-  right: -5px;
-  margin-top: -5px;
-}
-.stick-bl{
-  bottom: -5px;
-  left: -5px;
-}
-.stick-br{
-  bottom: -5px;
-  right: -5px;
 }
