@@ -136,6 +136,7 @@
 
         //   一些全局的属性
         this.canDrag = false; // 初始元素点击能否拖拽的标志位
+        this.canMove = false; 
         this.clickData = {}; // 用于保存点击数据
         this.draggy = false; // 为 true 时说明点到了 draggable 元素
         this.dnddy = false; // 为 true 时说明点到了 dndne 元素
@@ -160,14 +161,25 @@
             this.addEvent(document, 'mousedown', function (event) {
                 _this.getDndneData(event);
                 _this.creatNewDndne(event, _this.clickData);
+                _this.removeActive(event);
+                _this.removeEditStyle(event);
+                _this.exeTools(event);
+                _this.dndneDragStart(event);
             });
             this.addEvent(document, 'mousemove', function (event) {
                 _this.newDndneMove(event);
+                _this.dndneMove(event);
             });
             this.addEvent(document, 'mouseup', function (event) {
                 _this.newDndneDrop(event);
-                _this.removeActive(event);
+                // _this.dndneDrop(event);
             });
+            this.addEvent(this.canvas, 'click', function (event) {
+                _this.addActive(event);
+            });
+            this.addEvent(this.canvas, 'dblclick', function (event) {
+                _this.addEditStyle(event);
+            });  
         },
 
 
@@ -201,7 +213,6 @@
             var isDraggable = target.classList.contains("draggable");
             var isSign = target.classList.contains("signature");
             if (isDraggable) {
-                this.removeActive(e);
                 if (isSign) {
                     this.createSign(e, data);
                 } else {
@@ -237,8 +248,8 @@
             text.style.zIndex = this.zIndex + 1;
             text.style.left = e.pageX - this.clickData.x + "px";
             text.style.top = e.pageY - this.clickData.y + "px";
-            text.style.width = data.width;
-            text.style.height = data.height;
+            text.style.width = this.clickData.width;
+            text.style.height = this.clickData.height;
             text.style.color = data.color;
             text.style.fontSize = data.fontSize;
             text.style.fontFamily = data.fontFamily;
@@ -290,12 +301,12 @@
             var dndne = document.createElement("div");
             dndne.setAttribute("class", "dndne active");
             dndne.style.width = this.clickData.width + "px";
-            dndne.style.height = this.clickData.height + "px";
             var t = parseInt(this.getCSS(elem, "top"));
             var l = parseInt(this.getCSS(elem, "left"));
             dndne.style.top = t - this.canvasTop + "px";
             dndne.style.left = l - this.canvasLeft + "px";
 
+            elem.style.position = "relative";
             elem.style.top = 0;
             elem.style.left = 0;
             dndne.appendChild(elem);
@@ -320,19 +331,120 @@
             if (!isSign) {
                 dndne.appendChild(stickl);
                 dndne.appendChild(stickr);
+            }else{
+                dndne.classList.add("sign");
             }
 
             this.canvas.appendChild(dndne);
         },
         removeActive: function (e) {
             var target = e.target || e.srcElement;
-            var isActive;
-            target.parentNode ? isActive = target.parentNode.classList.contains("active") : isActive = false;
-            if (!isActive) {
+            var isActive,isTool;
+            target.parentNode ? isActive = target.parentNode.classList.contains("active") || target.classList.contains("active") : isActive = false;
+            isTool = target.classList.contains("tool-item");
+            if (!isActive && !isTool) {
                 var activeDndne = this.canvas.querySelector(".active");
                 activeDndne && activeDndne.classList.remove("active");
             }
         },
+        addActive: function (e) {
+            var target = e.target || e.srcElement;
+            var isBlank = target.classList.contains("canvas");
+            if(!isBlank){
+                var currentDndne = this.findTopDndne(target);
+                currentDndne && currentDndne.classList.add("active");
+            }
+        },
+        findTopDndne: function(elem){
+            if(elem.classList.contains("dndne")){
+                return elem;    
+            }
+            return this.findTopDndne(elem.parentNode);
+        },
+        addEditStyle: function (e) {
+            var target = e.target || e.srcElement;
+            var isBlank = target.classList.contains("canvas");
+            if (!isBlank) {
+                var activeDndne = this.canvas.querySelector(".active");
+                var isSign = target.classList.contains("dndne-sign") || target.parentNode.classList.contains("dndne-sign");
+                if(activeDndne && !isSign){
+                    activeDndne.classList.add("dndne-editor");
+                    var text = activeDndne.querySelector(".dndne-text");
+                    text && text.setAttribute("contenteditable", true);
+                    this.selectAllText(text);
+                }
+            }
+        },
+        removeEditStyle: function (e) {
+            var target = e.target || e.srcElement;
+            var isBlank = target.classList.contains("canvas");
+            if (isBlank) {
+                var editor = this.canvas.querySelector(".dndne-editor");
+                if(editor){
+                    var text = editor.querySelector(".dndne-text");
+                    text.setAttribute("contenteditable", false);
+                    text.parentNode.classList.remove("dndne-editor");
+                }
+            }
+        },
+        exeTools: function(e){
+            var target = e.target || e.srcElement;
+            var tool = target.getAttribute("id");
+            var activeDndne = this.canvas.querySelector(".active");
+            switch(tool){
+                case "tool_bold":
+                    this.command("bold");
+                    break;
+                case "tool_underline":
+                    this.command("underline");
+                    break;
+                case "tool_undo":
+                    this.command("undo");
+                    break;
+                case "tool_redo":
+                    this.command("redo");
+                    break;
+                case "tool_alignleft":
+                    this.command("justifyLeft");
+                    break;
+                case "tool_aligncenter":
+                    this.command("justifyCenter");
+                    break;
+                case "tool_alignright":
+                    this.command("justifyRight");
+                    break;
+                case "tool_delete":
+                    if(activeDndne){
+                        this.canvas.removeChild(activeDndne);
+                    }
+                    break;
+            }
+        },
+        dndneDragStart: function(e){
+            var target = e.target || e.srcElement;
+            var currentDndne = this.findTopDndne(target);
+            if(currentDndne){
+                this.canMove = true;
+                this.clickData.x = e.offsetX;
+                this.clickData.y = e.offsetY;
+            }
+        },
+        dndneMove: function(e){
+            if(this.canMove){
+                var currentDndne = this.canvas.querySelector(".active");
+                currentDndne.style.left = e.clientX - this.canvasLeft - this.clickData.x + "px";
+                currentDndne.style.top = e.clientY - this.canvasTop - this.clickData.y + "px";
+            }
+        },
+        dndneDrop: function(e){
+            var target = e.target || e.srcElement;
+            var currentDndne = this.findTopDndne(target);
+            if(currentDndne){
+                this.canMove = false;
+            }
+        },
+        
+
 
 
 
@@ -364,20 +476,47 @@
                 node["on" + eventName] = null;
             }
         },
-        stopBubble: function (e) {
-            if (e && e.stopPropagation) {
-                e.stopPropagation()
-            } else if (window.event) {
-                window.event.cancelBubble = true;
+        // stopBubble: function (e) {
+        //     if (e && e.stopPropagation) {
+        //         e.stopPropagation()
+        //     } else if (window.event) {
+        //         window.event.cancelBubble = true;
+        //     }
+        // },
+        // stopDefault: function (e) {
+        //     if (e && e.preventDefault) {
+        //         e.preventDefault();
+        //     } else {
+        //         window.event.returnValue = false;
+        //     }
+        //     return false;
+        // },
+        selectAllText: function (elem) {
+            if (document.body.createTextRange) {
+                var range = document.body.createTextRange();
+                range.moveToElementText(elem);
+                range.select();
+            } else if (window.getSelection) {
+                var selection = window.getSelection();
+                var range = document.createRange();
+                range.selectNodeContents(elem);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                alert("none");
             }
         },
-        stopDefault: function (e) {
-            if (e && e.preventDefault) {
-                e.preventDefault();
+        command:function (cmd, val) {
+            document.execCommand(cmd, false, val);
+        },
+        returnARange: function (ret, range1, range2) {
+            if (ret <= range1) {
+                return range1;
+            } else if (ret >=range2) {
+                return range2;
             } else {
-                window.event.returnValue = false;
+                return ret;
             }
-            return false;
         }
     };
 
