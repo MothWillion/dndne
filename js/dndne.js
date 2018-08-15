@@ -136,15 +136,14 @@
 
         //   一些全局的属性
         this.canDrag = false; // 初始元素点击能否拖拽的标志位
-        this.canMove = false; 
+        this.canMove = false;
+        this.flexibleL = false;
+        this.flexibleR = false;
+        this.leftOrigin = 0;
+        this.rightOrigin = 0;
         this.clickData = {}; // 用于保存点击数据
         this.draggy = false; // 为 true 时说明点到了 draggable 元素
         this.dnddy = false; // 为 true 时说明点到了 dndne 元素
-        this.curDndState = {
-            editable: false,
-            moveable: true,
-            locked: false
-        };
         this.pages = []; //用于保存所有页面
         this.zIndex = 0;
     };
@@ -163,23 +162,26 @@
                 _this.creatNewDndne(event, _this.clickData);
                 _this.removeActive(event);
                 _this.removeEditStyle(event);
-                _this.exeTools(event);
                 _this.dndneDragStart(event);
+                _this.stickDragStart(event);
+                _this.exeTools(event);
             });
             this.addEvent(document, 'mousemove', function (event) {
                 _this.newDndneMove(event);
                 _this.dndneMove(event);
+                _this.stickMove(event);
             });
             this.addEvent(document, 'mouseup', function (event) {
                 _this.newDndneDrop(event);
-                // _this.dndneDrop(event);
+                _this.dndneDrop(event);
+                _this.stickDrop();
             });
-            this.addEvent(this.canvas, 'click', function (event) {
-                _this.addActive(event);
+            this.addEvent(document, 'keydown', function (event) {
+                _this.savePage(event);
             });
             this.addEvent(this.canvas, 'dblclick', function (event) {
                 _this.addEditStyle(event);
-            });  
+            });
         },
 
 
@@ -248,8 +250,6 @@
             text.style.zIndex = this.zIndex + 1;
             text.style.left = e.pageX - this.clickData.x + "px";
             text.style.top = e.pageY - this.clickData.y + "px";
-            text.style.width = this.clickData.width;
-            text.style.height = this.clickData.height;
             text.style.color = data.color;
             text.style.fontSize = data.fontSize;
             text.style.fontFamily = data.fontFamily;
@@ -259,8 +259,6 @@
         newDndneMove: function (e) {
             var newdndne = document.querySelector(".newdndne");
             if (this.canDrag) {
-                this.clickData.width = newdndne.offsetWidth;
-                this.clickData.height = newdndne.offsetHeight;
                 newdndne.style.left = e.pageX - this.clickData.x + "px";
                 newdndne.style.top = e.pageY - this.clickData.y + "px";
             }
@@ -331,7 +329,7 @@
             if (!isSign) {
                 dndne.appendChild(stickl);
                 dndne.appendChild(stickr);
-            }else{
+            } else {
                 dndne.classList.add("sign");
             }
 
@@ -339,7 +337,7 @@
         },
         removeActive: function (e) {
             var target = e.target || e.srcElement;
-            var isActive,isTool;
+            var isActive, isTool;
             target.parentNode ? isActive = target.parentNode.classList.contains("active") || target.classList.contains("active") : isActive = false;
             isTool = target.classList.contains("tool-item");
             if (!isActive && !isTool) {
@@ -347,51 +345,59 @@
                 activeDndne && activeDndne.classList.remove("active");
             }
         },
-        addActive: function (e) {
-            var target = e.target || e.srcElement;
-            var isBlank = target.classList.contains("canvas");
-            if(!isBlank){
-                var currentDndne = this.findTopDndne(target);
-                currentDndne && currentDndne.classList.add("active");
+        findTopDndne: function (e, elem) {
+            if (this.inCanvas(e)) {
+                var target = e.target || e.srcElement;
+                var isCanvas = target.classList.contains("canvas");
+                var isStick = target.classList.contains("stick");
+                if (!isCanvas && !isStick && elem) {
+                    if (elem.classList.contains("dndne")) {
+                        return elem;
+                    }
+                    return this.findTopDndne(e, elem.parentNode);
+                }
             }
-        },
-        findTopDndne: function(elem){
-            if(elem.classList.contains("dndne")){
-                return elem;    
-            }
-            return this.findTopDndne(elem.parentNode);
         },
         addEditStyle: function (e) {
             var target = e.target || e.srcElement;
-            var isBlank = target.classList.contains("canvas");
-            if (!isBlank) {
+            var isCanvas = target.classList.contains("canvas");
+            if (!isCanvas) {
                 var activeDndne = this.canvas.querySelector(".active");
                 var isSign = target.classList.contains("dndne-sign") || target.parentNode.classList.contains("dndne-sign");
-                if(activeDndne && !isSign){
+                if (activeDndne && !isSign) {
                     activeDndne.classList.add("dndne-editor");
+                    activeDndne.style.width = activeDndne.offsetWidth + "px";
                     var text = activeDndne.querySelector(".dndne-text");
                     text && text.setAttribute("contenteditable", true);
-                    this.selectAllText(text);
+                    if (this.flexibleL === false && this.flexibleR === false) {
+                        this.selectAllText(text);
+                    }
                 }
             }
         },
         removeEditStyle: function (e) {
             var target = e.target || e.srcElement;
-            var isBlank = target.classList.contains("canvas");
-            if (isBlank) {
-                var editor = this.canvas.querySelector(".dndne-editor");
-                if(editor){
+            var dndne = this.findTopDndne(e, target);
+            var editor = this.canvas.querySelector(".dndne-editor");
+            var isTool = target.classList.contains("tool-item");
+            if (dndne) {
+                var isEditor = dndne.classList.contains("dndne-editor");
+                if (!isEditor && editor) {
                     var text = editor.querySelector(".dndne-text");
                     text.setAttribute("contenteditable", false);
                     text.parentNode.classList.remove("dndne-editor");
                 }
+            } else if (!isTool && editor) {
+                var text = editor.querySelector(".dndne-text");
+                text.setAttribute("contenteditable", false);
+                text.parentNode.classList.remove("dndne-editor");
             }
         },
-        exeTools: function(e){
+        exeTools: function (e) {
             var target = e.target || e.srcElement;
             var tool = target.getAttribute("id");
             var activeDndne = this.canvas.querySelector(".active");
-            switch(tool){
+            switch (tool) {
                 case "tool_bold":
                     this.command("bold");
                     break;
@@ -414,36 +420,116 @@
                     this.command("justifyRight");
                     break;
                 case "tool_delete":
-                    if(activeDndne){
+                    if (activeDndne) {
                         this.canvas.removeChild(activeDndne);
                     }
                     break;
             }
         },
-        dndneDragStart: function(e){
+        dndneDragStart: function (e) {
             var target = e.target || e.srcElement;
-            var currentDndne = this.findTopDndne(target);
-            if(currentDndne){
-                this.canMove = true;
-                this.clickData.x = e.offsetX;
-                this.clickData.y = e.offsetY;
+            var isCanvas = target.classList.contains("canvas");
+            if (!isCanvas) {
+                var currentDndne = this.findTopDndne(e, target);
+                if (currentDndne) {
+                    this.canMove = true;
+                    currentDndne.classList.add("active");
+                    var isSignBlank = target.classList.contains("sign");
+                    if(isSignBlank){
+                        this.clickData.x = e.offsetX;
+                        this.clickData.y = e.offsetY;
+                    }else{
+                        this.clickData.x = e.offsetX + target.offsetLeft;
+                        this.clickData.y = e.offsetY + target.offsetTop;
+                    }
+                }
             }
         },
-        dndneMove: function(e){
-            if(this.canMove){
+        dndneMove: function (e) {
+            var editDndne = this.canvas.querySelector(".dndne-editor");
+            if (this.canMove && !editDndne) {
                 var currentDndne = this.canvas.querySelector(".active");
-                currentDndne.style.left = e.clientX - this.canvasLeft - this.clickData.x + "px";
-                currentDndne.style.top = e.clientY - this.canvasTop - this.clickData.y + "px";
+                if (currentDndne) {
+                    var xRange = e.pageX - this.clickData.x - this.canvasLeft;
+                    var yRange = e.pageY - this.clickData.y - this.canvasTop;
+                    currentDndne.style.left = this.returnARange(xRange, 0, this.canvas.offsetWidth - currentDndne.offsetWidth) + "px";
+                    currentDndne.style.top = this.returnARange(yRange, 0, this.canvas.offsetHeight - currentDndne.offsetHeight) + "px";
+                }
             }
         },
-        dndneDrop: function(e){
+        dndneDrop: function (e) {
             var target = e.target || e.srcElement;
-            var currentDndne = this.findTopDndne(target);
-            if(currentDndne){
+            var currentDndne = this.findTopDndne(e, target);
+            if (currentDndne) {
                 this.canMove = false;
             }
         },
-        
+        stickDragStart: function (e) {
+            var target = e.target || e.srcElement;
+            var isStick = target.classList.contains("stick");
+            if (isStick) {
+                var stickType = target.classList.toString().slice(6);
+                switch (stickType) {
+                    case "stick-tl":
+                        console.log("stick-tl");
+                        break;
+                    case "stick-tr":
+                        console.log("stick-tr");
+                        break;
+                    case "stick-bl":
+                        console.log("stick-bl");
+                        break;
+                    case "stick-br":
+                        console.log('stick-br');
+                        break;
+                    case "stick-l":
+                        this.flexibleL = true;
+                        this.addEditStyle(e);
+                        this.rightOrigin = target.parentNode.offsetWidth + target.parentNode.offsetLeft;
+                        this.minWidth = this.getCSS(target.parentNode.querySelector(".dndne-text"), "font-size");
+                        break;
+                    case "stick-r":
+                        this.flexibleR = true;
+                        this.addEditStyle(e);
+                        this.leftOrigin = target.parentNode.offsetLeft;
+                        this.minWidth = this.getCSS(target.parentNode.querySelector(".dndne-text"), "font-size");
+                        break;
+                }
+            }
+        },
+        stickMove: function (e) {
+            if (this.flexibleL) {
+                var activeDndne = this.canvas.querySelector(".active");
+                if (activeDndne) {
+                    var width = this.rightOrigin - (e.clientX - this.canvasLeft);
+                    var maxLeft = this.rightOrigin - parseInt(this.minWidth);
+                    var left = e.clientX - this.canvasLeft;
+                    activeDndne.style.minWidth = this.minWidth;
+                    activeDndne.style.width = this.returnARange(width, this.minWidth, this.rightOrigin) + "px";
+                    activeDndne.style.left = this.returnARange(left, 0, maxLeft) + "px";
+                }
+            }
+            if (this.flexibleR) {
+                var activeDndne = this.canvas.querySelector(".active");
+                if (activeDndne) {
+                    var width = e.clientX - this.canvasLeft - this.leftOrigin;
+                    activeDndne.style.width = this.returnARange(width, this.minWidth, this.canvas.offsetWidth - this.leftOrigin) + "px";
+                    activeDndne.style.minWidth = this.minWidth;
+                }
+            }
+        },
+        stickDrop: function () {
+            this.flexibleL = false;
+            this.flexibleR = false;
+        },
+        savePage: function(e){
+            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)){
+                e.preventDefault();
+                alert('saved');
+            }
+        },
+
+
 
 
 
@@ -476,21 +562,6 @@
                 node["on" + eventName] = null;
             }
         },
-        // stopBubble: function (e) {
-        //     if (e && e.stopPropagation) {
-        //         e.stopPropagation()
-        //     } else if (window.event) {
-        //         window.event.cancelBubble = true;
-        //     }
-        // },
-        // stopDefault: function (e) {
-        //     if (e && e.preventDefault) {
-        //         e.preventDefault();
-        //     } else {
-        //         window.event.returnValue = false;
-        //     }
-        //     return false;
-        // },
         selectAllText: function (elem) {
             if (document.body.createTextRange) {
                 var range = document.body.createTextRange();
@@ -506,13 +577,13 @@
                 alert("none");
             }
         },
-        command:function (cmd, val) {
+        command: function (cmd, val) {
             document.execCommand(cmd, false, val);
         },
         returnARange: function (ret, range1, range2) {
             if (ret <= range1) {
                 return range1;
-            } else if (ret >=range2) {
+            } else if (ret >= range2) {
                 return range2;
             } else {
                 return ret;
