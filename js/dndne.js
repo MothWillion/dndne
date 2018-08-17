@@ -98,7 +98,7 @@
     }), t = null
 }());
 (function (global) {
-    "use strict";
+    // "use strict";
 
     var Dndne = function () {
         this.container = this.getDomById("dndne_box");
@@ -141,22 +141,34 @@
         this.flexibleR = false;
         this.leftOrigin = 0;
         this.rightOrigin = 0;
+        this.page = ''; // 保存当前编辑页面数据
+        this.pages = [{
+            id: 'page1',
+            innerHTML: JSON.stringify('')
+        }]; // 保存所有页面数据
         this.clickData = {}; // 用于保存点击数据
         this.draggy = false; // 为 true 时说明点到了 draggable 元素
         this.dnddy = false; // 为 true 时说明点到了 dndne 元素
         this.pages = []; //用于保存所有页面
-        this.zIndex = 0;
+        this.zIndex = 10;
+        this.interval = 3;
+        this.deleteNum = undefined;
     };
 
     Dndne.prototype = {
         init: function (config) {
             this.zIndex = config.zIndex;
+            this.interval = config.interval;
+            this.padding = {
+                lnr:config.padding.lnr,
+                tnb:config.padding.tnb
+            };
         },
 
 
         run: function () {
             var _this = this;
-            // 为了让业务逻辑更加清晰，具体的判断都封装在函数中了
+            this.autoSavePage(this.interval);
             this.addEvent(document, 'mousedown', function (event) {
                 _this.getDndneData(event);
                 _this.creatNewDndne(event, _this.clickData);
@@ -182,12 +194,22 @@
             this.addEvent(this.canvas, 'dblclick', function (event) {
                 _this.addEditStyle(event);
             });
+            this.addEvent(this.addPage, 'click', function (event) {
+                _this.addNewPage(event);
+            });
+            this.addEvent(this.pageList, 'click', function (event) {
+                _this.turnToPage(event);
+                _this.copyPage(event);
+                _this.deletePage(event);
+            });
+            this.addEvent(this.mask,'click',function(event){
+                _this.showDeletePop(event,this.deleteNum);
+            });
         },
 
 
 
 
-        // 1、隐藏目标元素 2、获取点击数据  3、设置拖拽标志位
         getDndneData: function (e) {
             var target = e.target || e.srcElement;
             var isDraggable = target.classList.contains("draggable");
@@ -298,7 +320,7 @@
         creatDndne: function (elem, isSign) {
             var dndne = document.createElement("div");
             dndne.setAttribute("class", "dndne active");
-            dndne.style.width = this.clickData.width + "px";
+            dndne.style.width = elem.offsetWidth + "px";
             var t = parseInt(this.getCSS(elem, "top"));
             var l = parseInt(this.getCSS(elem, "left"));
             dndne.style.top = t - this.canvasTop + "px";
@@ -346,11 +368,12 @@
             }
         },
         findTopDndne: function (e, elem) {
-            if (this.inCanvas(e)) {
-                var target = e.target || e.srcElement;
+            var target = e.target || e.srcElement;
+            if (this.inCanvas(e) && !isMask ) {
+                var isMask = this.isMask(target);
                 var isCanvas = target.classList.contains("canvas");
                 var isStick = target.classList.contains("stick");
-                if (!isCanvas && !isStick && elem) {
+                if (!isCanvas && !isStick && elem && !isMask) {
                     if (elem.classList.contains("dndne")) {
                         return elem;
                     }
@@ -435,10 +458,10 @@
                     this.canMove = true;
                     currentDndne.classList.add("active");
                     var isSignBlank = target.classList.contains("sign");
-                    if(isSignBlank){
+                    if (isSignBlank) {
                         this.clickData.x = e.offsetX;
                         this.clickData.y = e.offsetY;
-                    }else{
+                    } else {
                         this.clickData.x = e.offsetX + target.offsetLeft;
                         this.clickData.y = e.offsetY + target.offsetTop;
                     }
@@ -501,9 +524,9 @@
             if (this.flexibleL) {
                 var activeDndne = this.canvas.querySelector(".active");
                 if (activeDndne) {
-                    var width = this.rightOrigin - (e.clientX - this.canvasLeft);
+                    var width = this.rightOrigin - (e.pageX - this.canvasLeft);
                     var maxLeft = this.rightOrigin - parseInt(this.minWidth);
-                    var left = e.clientX - this.canvasLeft;
+                    var left = e.pageX - this.canvasLeft;
                     activeDndne.style.minWidth = this.minWidth;
                     activeDndne.style.width = this.returnARange(width, this.minWidth, this.rightOrigin) + "px";
                     activeDndne.style.left = this.returnARange(left, 0, maxLeft) + "px";
@@ -512,8 +535,9 @@
             if (this.flexibleR) {
                 var activeDndne = this.canvas.querySelector(".active");
                 if (activeDndne) {
-                    var width = e.clientX - this.canvasLeft - this.leftOrigin;
-                    activeDndne.style.width = this.returnARange(width, this.minWidth, this.canvas.offsetWidth - this.leftOrigin) + "px";
+                    var width = e.pageX - this.canvasLeft - this.leftOrigin;
+                    var maxWidth = this.canvas.offsetWidth - this.leftOrigin;
+                    activeDndne.style.width = this.returnARange(width, this.minWidth, maxWidth) + "px";
                     activeDndne.style.minWidth = this.minWidth;
                 }
             }
@@ -522,10 +546,176 @@
             this.flexibleL = false;
             this.flexibleR = false;
         },
-        savePage: function(e){
-            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)){
-                e.preventDefault();
-                alert('saved');
+        savePage: function () {
+            this.page = this.canvas.innerHTML;
+            var currentPage = this.pageList.querySelector(".active").querySelector(".min-page");
+            var id = currentPage.getAttribute("id");
+            this.pages = this.updateArray(this.pages, {
+                id: id,
+                innerHTML: JSON.stringify(this.page)
+            });
+            var vcanvas = document.createElement("div");
+            vcanvas.innerHTML = this.page;
+            vcanvas.setAttribute("class", "page-boxes");
+            currentPage.innerHTML = '';
+            currentPage.appendChild(vcanvas);
+            var activeDndne = this.pageList.querySelector('.active').querySelector('.active');
+            activeDndne && activeDndne.classList.remove("active");
+        },
+        autoSavePage: function (interval) {
+            var _this = this;
+            setTimeout(function () {
+                var oldPage = JSON.stringify(_this.page);
+                var newPage = JSON.stringify(_this.canvas.innerHTML);
+                if (newPage != oldPage) {
+                    _this.savePage();
+                }
+                setTimeout(arguments.callee, interval * 1000);
+            }, interval * 1000);
+        },
+        addNewPage: function (e) {
+            var target = e.target || e.srcElement;
+            var isAddpage = target.classList.contains("add-page");
+            if (isAddpage) {
+                this.savePage();
+                var activeId = Math.random(0, 1).toString().slice(2);
+                this.page = '';
+                this.canvas.innerHTML = '';
+                this.updateArray(this.pages, {
+                    id: "page" + activeId,
+                    innerHTML: JSON.stringify(this.page)
+                });
+                var oldActive = this.pageList.querySelector(".active");
+                oldActive.classList.remove("active");
+                var pageItem = document.createElement("li");
+                pageItem.setAttribute("class", "page-item active");
+                this.pageList.appendChild(pageItem);
+                var minPage = document.createElement("div");
+                minPage.setAttribute("class", "min-page");
+                minPage.setAttribute("id", "page" + activeId);
+                pageItem.appendChild(minPage);
+                var pageMask = document.createElement("div");
+                pageMask.setAttribute("class", "page-mask");
+                pageMask.innerText = "正在编辑此页";
+                pageItem.appendChild(pageMask);
+                var pageCopy = document.createElement("div");
+                pageCopy.setAttribute("class", "page-copy");
+                pageCopy.setAttribute("title", "复制此页");
+                pageItem.appendChild(pageCopy);
+                var pageDelete = document.createElement("div");
+                pageDelete.setAttribute("class", "page-delete");
+                pageDelete.setAttribute("title", "删除此页");
+                pageItem.appendChild(pageDelete);
+                var pageNum = document.createElement("div");
+                pageNum.setAttribute("class", "page-num");
+                pageNum.innerText = document.querySelectorAll(".min-page").length;
+                pageItem.appendChild(pageNum);
+            }
+        },
+        turnToPage: function (e) {
+            this.savePage();
+            var target = e.target || e.srcElement;
+            var isPageMask = target.classList.contains("page-mask");
+            if (isPageMask) {
+                var rightContainer = target.parentNode.querySelector(".page-boxes");
+                if (rightContainer) {
+                    var html = rightContainer.innerHTML;
+                    this.canvas.innerHTML = html;
+                } else {
+                    this.canvas.innerHTML = '';
+                }
+                var oldActive = this.pageList.querySelector(".active");
+                oldActive.classList.remove("active");
+                target.parentNode.classList.add("active");
+            }
+        },
+        copyPage: function (e) {
+            var target = e.target || e.srcElement;
+            var isCopy = target.classList.contains("page-copy");
+            if (isCopy) {
+                var copyLi = target.parentNode;
+                var newLi = document.createElement("li");
+                var activeLi = this.pageList.querySelector(".active");
+                newLi.setAttribute("class", "page-item");
+                newLi.innerHTML = copyLi.innerHTML;
+                this.insertAfter(newLi, copyLi);
+                activeLi.classList.remove("active");
+                newLi.classList.add("active");
+                this.canvas.innerHTML = newLi.querySelector(".page-boxes").innerHTML;
+                var newPageId = "page" + Math.random(0, 1).toString().slice(2);
+                var newPage = newLi.querySelector(".min-page");
+                newPage.setAttribute("id", newPageId);
+                var pageNums = this.pageList.querySelectorAll(".page-num");
+                for (var n = 0; n < pageNums.length; n++) {
+                    pageNums[n].innerText = n + 1;
+                }
+            }
+        },
+        deletePage: function (e) {
+            var target = e.target || e.srcElement;
+            var isDelete = target.classList.contains("page-delete");
+            if (isDelete) {
+                var deleteLi = target.parentNode;
+                var deleteBtns = this.pageList.querySelectorAll(".page-delete");
+                var pageId = deleteLi.querySelector(".min-page").getAttribute("id");
+                if (deleteBtns.length === 1) {
+                    this.showTip("delete_tip1");
+                } else if (this.isPage1(pageId)) {
+                    this.showTip("delete_tip4");
+                } else {
+                    this.mask.style.display = "block";
+                    this.deleteNum = deleteLi.querySelector(".page-num").innerText;
+                }
+            }
+        },
+        showTip: function (id) {
+            document.getElementById(id).style.top = "60px";
+            document.getElementById(id).style.opacity = 1;
+            setTimeout(function () {
+                document.getElementById(id).style.top = "-40px";
+                document.getElementById(id).style.opacity = 0;
+            }, 2000);
+        },
+        isPage1: function (id) {
+            var num = id.slice(4);
+            return num == "1" ? true : false;
+        },
+        isMask: function(target){
+            var isMask = target.classList.contains("pop-mask");
+            var isPop = target.classList.contains("delete-pop");
+            var isTitle = target.classList.contains("pop-title");
+            var isTip = target.classList.contains("pop-tip");
+            var isBtns = target.classList.contains("pop-btns");
+            var isBtn = target.classList.contains("pop-btn");
+            if(isMask || isPop || isTitle || isTip || isBtns || isBtn){
+                return true;
+            }else{
+                return false;
+            }
+        },
+        showDeletePop: function(e,num){
+            var target = e.target || e.srcElement;
+            var isCancel = target.getAttribute("id") === "pop_cancel"; 
+            var isDelete = target.getAttribute("id") === "pop_delete";
+            if(isCancel){
+                this.mask.style.display = "none";
+            } 
+            if(isDelete){
+                this.mask.style.display = "none";
+                var pageLis = this.pageList.querySelectorAll(".page-item");
+                var deleteLi = pageLis[this.deleteNum-1];
+                var previousLi = pageLis[this.deleteNum-2];
+                var isActiveLi = deleteLi.classList.contains("active");
+                if(isActiveLi){
+                    previousLi.classList.add("active");
+                    this.canvas.innerHTML = previousLi.querySelector(".page-boxes").innerHTML;
+                }
+                this.pageList.removeChild(deleteLi);
+                var pageNums = this.pageList.querySelectorAll(".page-num");
+                for (var n = 0; n < pageNums.length; n++) {
+                    pageNums[n].innerText = n + 1;
+                }
+                this.showTip("delete_tip2");
             }
         },
 
@@ -587,6 +777,27 @@
                 return range2;
             } else {
                 return ret;
+            }
+        },
+        updateArray: function (arr, item) {
+            var has = false;
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].id == item.id) {
+                    has = true;
+                    arr[i] = item;
+                }
+            }
+            if (!has) {
+                arr.push(item);
+            }
+            return arr;
+        },
+        insertAfter: function (newElem, targentElem) {
+            var parent = targentElem.parentNode;
+            if (parent.lastChild == targentElem) {
+                parent.appendChild(newElem);
+            } else {
+                parent.insertBefore(newElem, targentElem.nextSibling)
             }
         }
     };

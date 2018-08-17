@@ -296,7 +296,7 @@ li {
 
 .page-list {
   margin-top: 20px;
-  margin-bottom: 60px;
+  margin-bottom: 20px;
 }
 
 .add-page-box {
@@ -465,7 +465,7 @@ li {
   color: #666;
   font-size: 14px;
   opacity: 0;
-  transition: all .3s;
+  transition: all .5s;
   box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
   background: #fff url(../images/error.png) no-repeat 20px center;
 }
@@ -494,7 +494,7 @@ li {
   color: #666;
   font-size: 14px;
   opacity: 0;
-  transition: all .3s;
+  transition: all .5s;
   box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2);
   background: #fff url(../images/success.png) no-repeat 20px center;
 }
@@ -660,17 +660,17 @@ li {
   cursor: text;
 }
 ::selection {
-  background: #9b58b5;
+  background: rgba(155,93,180,.7);
   color: white;
 }
 
 ::-moz-selection {
-  background: #9b58b5;
+  background: rgba(155,93,180,.7);
   color: white;
 }
 
 ::-webkit-selection {
-  background: #9b58b5;
+  background: rgba(155,93,180,.7);
   color: white;
 }
 .dndne p,.dndne div{

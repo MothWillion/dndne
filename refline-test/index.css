@@ -1,0 +1,28 @@
+body{
+  font-family: courier new, courier; 
+  font-size: 12px; 
+}
+
+.draggable{
+  border: 1px solid #ccc; 
+  display: inline-block; 
+  cursor: move;
+  position: absolute;         
+}
+
+.guide{
+  display: none; 
+  position: absolute; 
+  left: 0; 
+  top: 0; 
+}
+
+#guide-h{
+  border-top: 1px dashed #55f; 
+  width: 100%; 
+}
+
+#guide-v{
+  border-left: 1px dashed #55f; 
+  height: 100%; 
+}
